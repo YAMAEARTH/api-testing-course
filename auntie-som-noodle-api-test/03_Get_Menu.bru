@@ -1,0 +1,36 @@
+meta {
+  name: 03 - Get Menu
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/menu
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("Should return menu items with valid structure", function() {
+    expect(res.getStatus()).to.equal(200);
+    const menu = res.getBody();
+    expect(Array.isArray(menu)).to.be.true;
+    expect(menu.length).to.be.at.least(2);
+
+    const tomYum = menu.find(item => item.id === 1);
+    expect(tomYum).to.exist;
+    expect(tomYum.name).to.equal("Tom Yum Noodles");
+    expect(tomYum.price).to.equal(50);
+    expect(tomYum.stock).to.be.at.least(0);
+
+    const friedRice = menu.find(item => item.id === 2);
+    expect(friedRice).to.exist;
+    expect(friedRice.name).to.equal("Fried Rice");
+    expect(friedRice.price).to.equal(45);
+    expect(friedRice.stock).to.be.at.least(0);
+  });
+}

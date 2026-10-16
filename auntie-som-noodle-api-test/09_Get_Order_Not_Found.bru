@@ -1,0 +1,17 @@
+meta {
+  name: 09 - Get Order Not Found
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/orders/ORD-NONEXISTENT-999
+  body: none
+  auth: none
+}
+
+tests {
+  test("Should return 404 Not Found for non-existent order ID", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

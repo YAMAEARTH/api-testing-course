@@ -1,0 +1,34 @@
+meta {
+  name: 07 - Create Order Invalid Item
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "itemId": 9999,
+    "quantity": 1
+  }
+}
+
+assert {
+  res.status: eq 404
+  res.body.error: eq Item not found
+}
+
+tests {
+  test("Should return 404 when ordering item that does not exist in menu", function() {
+    expect(res.getStatus()).to.equal(404);
+    expect(res.getBody().error).to.equal("Item not found");
+  });
+}

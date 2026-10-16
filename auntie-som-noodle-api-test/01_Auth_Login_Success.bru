@@ -1,0 +1,42 @@
+meta {
+  name: 01 - Login Success
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "student",
+    "password": "hungry"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody().accessToken) {
+    const token = res.getBody().accessToken;
+    bru.setEnvVar("token", token);
+    bru.setVar("token", token);
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.accessToken: isDefined
+  res.body.expiresIn: eq 3600
+}
+
+tests {
+  test("Status code is 200 and returns valid token", function() {
+    expect(res.getStatus()).to.equal(200);
+    const body = res.getBody();
+    expect(body).to.have.property("accessToken");
+    expect(body.accessToken).to.be.a("string");
+    expect(body.expiresIn).to.equal(3600);
+  });
+}

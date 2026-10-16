@@ -1,0 +1,24 @@
+meta {
+  name: 08 - Get Order Details
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/orders/{{orderId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("Should retrieve valid order details", function() {
+    expect(res.getStatus()).to.equal(200);
+    const body = res.getBody();
+    const expectedOrderId = bru.getVar("orderId") || bru.getEnvVar("orderId");
+    if (expectedOrderId) {
+      expect(body.orderId).to.equal(expectedOrderId);
+    }
+    expect(body.status).to.equal("created");
+    expect(body).to.have.property("totalPrice");
+  });
+}

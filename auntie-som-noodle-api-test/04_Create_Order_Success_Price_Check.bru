@@ -1,0 +1,40 @@
+meta {
+  name: 04 - Create Order
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/orders
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "itemId": 1,
+    "quantity": 1
+  }
+}
+
+script:post-response {
+  if (res.getBody() && res.getBody().orderId) {
+    const orderId = res.getBody().orderId;
+    bru.setEnvVar("orderId", orderId);
+    bru.setVar("orderId", orderId);
+  }
+}
+
+tests {
+  test("Order should calculate correct total price", function() {
+    expect(res.getStatus()).to.equal(200);
+    const body = res.getBody();
+    expect(body).to.have.property("orderId");
+    expect(body.status).to.equal("created");
+    expect(body.totalPrice).to.equal(50);
+  });
+}
